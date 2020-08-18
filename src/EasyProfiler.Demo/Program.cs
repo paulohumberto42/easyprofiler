@@ -11,10 +11,14 @@ namespace EasyProfiler.Demo
     {
         static void Main(string[] args)
         {
+            UsingServiceCollection();
+            SimpleUsage();
+        }
+        
+        static void UsingServiceCollection()
+        {
             IServiceCollection services = new ServiceCollection();
 
-            services.AddEasyProfiler();
-            services.AddEasyProfiler();
             services.AddEasyProfiler();
 
             services.EasyProfiled()
@@ -24,11 +28,25 @@ namespace EasyProfiler.Demo
             var serviceProvider = services.BuildServiceProvider();
             var service = serviceProvider.GetRequiredService<IService>();
 
-            MiniProfiler.StartNew();
-
+            MiniProfiler.StartNew(nameof(UsingServiceCollection));
             service.DoWork();
-
             Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+        }
+
+        static void SimpleUsage()
+        {
+            var proxyFactory = new ProfilingProxyFactory();
+            
+            IRepository repository = new Repository();
+            IRepository repositoryProxy = proxyFactory.CreateProxy(repository);
+
+            IService service = new Service(repositoryProxy);
+            IService serviceProxy = proxyFactory.CreateProxy(service);
+
+            MiniProfiler.StartNew(nameof(SimpleUsage));
+            serviceProxy.DoWork();
+            Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+
         }
     }
 }

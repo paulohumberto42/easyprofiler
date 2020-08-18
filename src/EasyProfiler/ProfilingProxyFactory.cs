@@ -8,10 +8,15 @@ namespace EasyProfiler
         private readonly EasyProfilerOptions options;
         private readonly ProxyGenerator generator;
 
-        public ProfilingProxyFactory(EasyProfilerOptions options)
+        public ProfilingProxyFactory(EasyProfilerOptions options = null)
         {
-            this.options = options;
+            this.options = options ?? new EasyProfilerOptions();
             this.generator = new ProxyGenerator();
+        }
+
+        public T CreateProxy<T>(T target)
+        {
+            return (T)this.CreateProxy(target, typeof(T));
         }
 
         public object CreateProxy(object target, Type serviceType)

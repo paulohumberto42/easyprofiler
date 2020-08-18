@@ -6,13 +6,7 @@ namespace EasyProfiler
     {
         public static IServiceCollection AddEasyProfiler(this IServiceCollection services, EasyProfilerOptions options = null)
         {
-            if (options == null)
-            {
-                options = new EasyProfilerOptions();
-            }
-
-            services.AddSingleton(options);
-            services.AddSingleton<ProfilingProxyFactory>();
+            services.AddSingleton(new ProfilingProxyFactory(options));
 
             return services;
         }
